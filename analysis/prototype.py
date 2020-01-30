@@ -131,8 +131,10 @@ def plot_sem_sent(tweets,lex):
         y_data.append(topics[k])
         y_sent_pos.append(topics_pos[k])
         y_sent_neg.append(topics_neg[k])
-    # with open('{}.json'.format('xxx'), 'w') as outfile:
-    #     json.dump(new_tweets, outfile)
+
+
+    with open('{}.json'.format('offline'), 'w') as outfile:
+        json.dump(new_tweets, outfile)
 
     plot('Topics','Topic','Number',x_data,y_data,'Number')
 
@@ -305,8 +307,6 @@ def temporal_vs_sent(tweets,start,end,file):
         f_csv.writerow(y_sent_pos)
         f_csv.writerow(y_sent_neg)
 def prototype():
-    # lex = load_lexicon("semantic_lexicon.json")
-    lex = load_lexicon_original("json//semantic_lexicon.json")
 
     tweets = []
     for root, dirs, files in os.walk("tweets"):
@@ -318,22 +318,37 @@ def prototype():
                     et['owner'] = f.split('.')[0]
                     tweets.append(et)
 
-    # plot_sem_sent(tweets,lex)
-    tweets_match = tweets_match_keyword(tweets, lex)
     print(len(tweets))
-    print(len(tweets_match))
-    generate_wordcloud_text(tweets_match,"aaa")
-    #sem_sent_csv("offline.json",lex)
-    # for y in range(2016,2020):
-    #     for m in range(1,13,3):
-    #         plot_temporal(tweets,'{}-{}-1'.format(y,m),'{}-{}-1'.format(y,m+2))
 
-    # plot_temporal(tweets, '2016-1-1', '2016-3-1')
-    # print_likes(tweets,10)
-    # plot_geo(tweets, 10)
-    # plot_hashtags(tweets,100)
+    # Plot topics vs number and sentiment vs topics
+    # lex = load_lexicon("semantic_lexicon.json")
+    # plot_sem_sent(tweets,lex)
+
+    # Plot semantic and sentiment with offline data
     # plot_sem_sent_offline("offline.json",lex)
-    #print(keyword_frequency(tweets))
+
+
+    # Generate wordcloud based on the words in the lexicon
+    # lex = load_lexicon_original("semantic_lexicon.json")
+    # tweets_match = tweets_match_keyword(tweets, lex)
+    # generate_wordcloud_text(tweets_match,"wordcloud_filename")
+
+    # Turn offline data into csv
+    # sem_sent_csv("offline.json",lex)
+
+    # Plot time vs number
+    # plot_temporal(tweets, '2016-1-1', '2016-3-1')
+
+    # Print out top 10 liked tweets
+    # print_likes(tweets,10)
+
+    # Plot top 10 location
+    # plot_geo(tweets, 10)
+
+    # Plot top 10 hashtags
+    # plot_hashtags(tweets,10)
+
+    # Plot sentiment change with time, output csv
     # temporal_vs_sent(tweets,'2014-1-1','2020-10-1',"offline_dict.json")
 def reformat():
     new_tweets = {}
@@ -344,7 +359,7 @@ def reformat():
             topic = t['topics']
             sent = t['sent']
             new_tweets[id] = {'topics':topic,'sent':sent}
-    with open('json//{}.json'.format('abccc'), 'w') as outfile:
+    with open('{}.json'.format('offline_dict'), 'w') as outfile:
         json.dump(new_tweets, outfile)
 def sem_geo_time():
     headers = ['id', 'date', 'geo', 'topics']
@@ -359,7 +374,7 @@ def sem_geo_time():
                     et['owner'] = f.split('.')[0]
                     tweets.append(et)
 
-    with open("{}".format("json//offline_dict.json")) as tw:
+    with open("{}".format("offline_dict.json")) as tw:
         tts = json.load(tw)
         for t in tweets:
             id = t['id']
@@ -379,7 +394,7 @@ def sem_geo_time():
             print(rrr,",",end="")
         print("")
     print(len(rows))
-    with open('csv//test.csv', 'w',errors='ignore')as f:
+    with open('csv//geo_date_topic.csv', 'w',errors='ignore')as f:
         f_csv = csv.writer(f)
         f_csv.writerow(headers)
         f_csv.writerows(rows)
@@ -429,6 +444,11 @@ def sem_sent_csv(file,lex):
     for k in topics_num:
         x_data.append(k)
         y_data.append(topics_num[k])
+
+    with open('csv//topics_num.csv', 'w',errors='ignore')as f:
+        f_csv = csv.writer(f)
+        f_csv.writerow(x_data)
+        f_csv.writerow(y_data)
     plot('Topics','Topic','Number',x_data,y_data,'Number')
 
 
@@ -445,6 +465,11 @@ def sem_sent_csv(file,lex):
     x_data.append("Overall")
     y_sent_pos.append(all_pos)
     y_sent_neg.append(all_neg)
+    with open('csv//sent_topics.csv', 'w',errors='ignore')as f:
+        f_csv = csv.writer(f)
+        f_csv.writerow(x_data)
+        f_csv.writerow(y_sent_pos)
+        f_csv.writerow(y_sent_neg)
     plot2('Sentiment','Topic','Sentiment',x_data,y_sent_pos,y_sent_neg,'Positive','Negative')
 def wordcloud_out():
     with open("json//wd_offline.json") as f:
